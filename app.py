@@ -10,20 +10,20 @@ load_dotenv()  # Load environment variables from .env file
 app = Flask(__name__)
 
 # MongoDB connection
-MONGODB_CONNECTION_STRING ="mongodb+srv://kerupuksamilerngembat:samiler123@cluster0.aqpiu5y.mongodb.net/"
-client = MongoClient(MONGODB_CONNECTION_STRING)
-db = client.your_database_name  # ganti <nama_database> dengan nama database Anda
+MONGO_URI = os.getenv('MONGO_URI')
+client = MongoClient(MONGO_URI)
+db = client["your_database_name"]
 cards_collection = db["cards"]
 
 # Valid credentials
-valid_username = os.getenv('admin')
-valid_password = os.getenv('admin123')
+valid_username = os.getenv('VALID_USERNAME')
+valid_password = os.getenv('VALID_PASSWORD')
 
 # Folder untuk menyimpan gambar
 UPLOAD_FOLDER = 'static/images'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-app.secret_key = os.getenv('your_secret_key')
+app.secret_key = os.getenv('SECRET_KEY')
 
 def login_required(f):
     def wrap(*args, **kwargs):
@@ -117,11 +117,13 @@ def update_card(id):
     cards_collection.update_one({"_id": ObjectId(id)}, {"$set": updated_card})
     return redirect(url_for('admin'))
 
+
 @app.route('/delete_card/<id>', methods=['POST'])
 @login_required
 def delete_card(id):
     cards_collection.delete_one({"_id": ObjectId(id)})
     return redirect(url_for('admin'))
+
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
