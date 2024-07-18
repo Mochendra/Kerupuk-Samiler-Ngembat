@@ -1,11 +1,11 @@
+from pymongo import MongoClient
 import os
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from pymongo import MongoClient
 from werkzeug.utils import secure_filename
 from bson import ObjectId
 from dotenv import load_dotenv
 
-load_dotenv()  # Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -117,13 +117,11 @@ def update_card(id):
     cards_collection.update_one({"_id": ObjectId(id)}, {"$set": updated_card})
     return redirect(url_for('admin'))
 
-
 @app.route('/delete_card/<id>', methods=['POST'])
 @login_required
 def delete_card(id):
     cards_collection.delete_one({"_id": ObjectId(id)})
     return redirect(url_for('admin'))
-
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
